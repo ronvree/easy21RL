@@ -9,10 +9,10 @@ N_0 = 100
 
 def monte_carlo_policy_eval():
     N, Q = dict(), dict()
-    for _ in range(100000):
+    for _ in range(1000000):
         # Run episode
-        episode, terminal, reward = [], False, 0
-        state = game.draw_init_values() + (False,)
+        episode, reward = [], 0
+        state = _, _, terminal = game.draw_init_state()
         while not terminal:
 
             v_t = Q.setdefault((state, True), 0)

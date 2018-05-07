@@ -20,6 +20,10 @@ def draw_init_values():
     return card_value(draw_black_card()), card_value(draw_black_card())
 
 
+def draw_init_state():
+    return draw_init_values() + (False,)
+
+
 def card_value(card):
     v, c = card
     return v if c == card_colors[1] else -v

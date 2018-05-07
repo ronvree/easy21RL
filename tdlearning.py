@@ -10,9 +10,9 @@ gamma = 1
 def sarsa_lambda_policy_eval(lam=0.2):
     Q, N = dict(), dict()
     for _ in range(100000):                                  # Repeat for each episode
-        terminal, E = False, dict()
+        E = dict()
 
-        S = game.draw_init_values() + (terminal,)              # Initialize S and A
+        S = _, _, terminal = game.draw_init_state()           # Initialize S and A
         A = rnd.choice([True, False])
 
         N.setdefault(S, 1)
@@ -65,7 +65,4 @@ if __name__ == '__main__':
     plt.imshow(vs)
 
     plt.show()
-
-
-
 
