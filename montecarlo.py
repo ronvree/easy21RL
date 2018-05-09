@@ -1,5 +1,4 @@
 import game
-import numpy as np
 import numpy.random as rnd
 import matplotlib.pyplot as plt
 
@@ -47,12 +46,13 @@ def monte_carlo_policy_eval():
 
 
 if __name__ == '__main__':
+    import numpy as np
 
     q = monte_carlo_policy_eval()
 
-    vs = np.zeros(shape=(len(game.card_values), 21))
+    vs = np.zeros(shape=(10, 21))
 
-    for d_sum in range(len(game.card_values)):
+    for d_sum in range(10):
         for p_sum in range(21):
             vs[d_sum, p_sum] = max([q.setdefault(((p_sum + 1, d_sum + 1, False), a), 0) for a in [True, False]])
 

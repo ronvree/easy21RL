@@ -1,19 +1,23 @@
-import numpy as np
-
-
-card_values = range(1, 11)
-card_colors = ['r', 'b']
+import random
 
 p_red = 1 / 3
 p_black = 1 - p_red
 
 
+def draw_card_value():
+    return random.randint(1, 10)
+
+
+def draw_card_color():
+    return random.random() > p_red
+
+
 def draw_card():
-    return np.random.choice(card_values), np.random.choice(card_colors, p=[p_red, p_black])
+    return draw_card_value(), draw_card_color()
 
 
 def draw_black_card():
-    return np.random.choice(card_values), card_colors[1]
+    return draw_card_value(), True
 
 
 def draw_init_values():
@@ -26,7 +30,7 @@ def draw_init_state():
 
 def card_value(card):
     v, c = card
-    return v if c == card_colors[1] else -v
+    return v if c else -v
 
 
 def valid_score(score):
@@ -50,10 +54,10 @@ def step(s: tuple, a: bool):
     p_sum, d_sum, terminal = s
     if terminal:
         raise Exception('Cannot perform action on terminal state!')
-    if a:
+    if a:  # Hit
         p_sum += card_value(draw_card())
         return (p_sum, d_sum, not valid_score(p_sum)), reward((p_sum, d_sum, terminal))
-    else:
+    else:  # Stick -> play dealer
         while valid_score(d_sum) and d_sum < 17:
             d_sum += card_value(draw_card())
 
