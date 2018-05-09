@@ -50,6 +50,8 @@ if __name__ == '__main__':
 
     q = sarsa_lambda_policy_eval(lam=0.2)
 
+    print(q)
+
     vs = np.zeros(shape=(10, 21))
 
     for d_sum in range(10):

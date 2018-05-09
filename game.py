@@ -38,7 +38,9 @@ def valid_score(score):
 
 
 def reward(state):
-    p_sum, d_sum, _ = state
+    p_sum, d_sum, terminal = state
+    if not terminal:
+        return 0
     if not valid_score(p_sum):
         return -1
     if not valid_score(d_sum):
@@ -56,9 +58,10 @@ def step(s: tuple, a: bool):
         raise Exception('Cannot perform action on terminal state!')
     if a:  # Hit
         p_sum += card_value(draw_card())
-        return (p_sum, d_sum, not valid_score(p_sum)), reward((p_sum, d_sum, terminal))
+        s = (p_sum, d_sum, not valid_score(p_sum))
+        return s, reward(s)
     else:  # Stick -> play dealer
         while valid_score(d_sum) and d_sum < 17:
             d_sum += card_value(draw_card())
-
-        return (p_sum, d_sum, True), reward((p_sum, d_sum, True))
+        s = (p_sum, d_sum, True)
+        return s, reward(s)

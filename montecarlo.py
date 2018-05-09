@@ -9,23 +9,23 @@ N_0 = 100
 
 def monte_carlo_policy_eval():
     N, Q = ZeroDict(), ZeroDict()
-    for _ in range(1000000):
+    for _ in range(100000):
         # Run episode
         episode, reward = [], 0
-        state = _, _, terminal = game.draw_init_state()
+        S = _, _, terminal = game.draw_init_state()
         while not terminal:
 
-            epsilon = N_0 / (N_0 + N[state])
+            epsilon = N_0 / (N_0 + N[S])
 
             if rnd.choice([True, False], p=[epsilon, 1 - epsilon]):
                 a = rnd.choice([True, False])
             else:
-                a = False if Q[state, False] > Q[state, True] else True
+                a = False if Q[S, False] > Q[S, True] else True
 
-            episode.append([state, a])
+            episode.append([S, a])
 
-            state, reward = game.step(state, a)
-            _, _, terminal = state
+            S, reward = game.step(S, a)
+            _, _, terminal = S
 
         # Append reward to episode
         for e in episode:
