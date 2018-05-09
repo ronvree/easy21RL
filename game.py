@@ -59,9 +59,8 @@ def step(s: tuple, a: bool):
     if a:  # Hit
         p_sum += card_value(draw_card())
         s = (p_sum, d_sum, not valid_score(p_sum))
-        return s, reward(s)
     else:  # Stick -> play dealer
         while valid_score(d_sum) and d_sum < 17:
             d_sum += card_value(draw_card())
         s = (p_sum, d_sum, True)
-        return s, reward(s)
+    return s, reward(s)

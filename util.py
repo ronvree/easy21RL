@@ -7,4 +7,3 @@ class ZeroDict(dict):
 
     def __getitem__(self, item):
         return self.get(item, 0)
-
