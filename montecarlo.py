@@ -2,32 +2,27 @@ import game
 import numpy.random as rnd
 import matplotlib.pyplot as plt
 
+from util import ZeroDict
 
 N_0 = 100
 
 
 def monte_carlo_policy_eval():
-    N, Q = dict(), dict()
+    N, Q = ZeroDict(), ZeroDict()
     for _ in range(1000000):
         # Run episode
         episode, reward = [], 0
         state = _, _, terminal = game.draw_init_state()
         while not terminal:
 
-            v_t = Q.setdefault((state, True), 0)
-            v_f = Q.setdefault((state, False), 0)
-            N.setdefault(state, 0)
-
             epsilon = N_0 / (N_0 + N[state])
 
             if rnd.choice([True, False], p=[epsilon, 1 - epsilon]):
-                a = rnd.choice([True, False], p=[0.5, 0.5])
+                a = rnd.choice([True, False])
             else:
-                a = False if v_f > v_t else True
+                a = False if Q[state, False] > Q[state, True] else True
 
             episode.append([state, a])
-
-            N.setdefault((state, a), 0)
 
             state, reward = game.step(state, a)
             _, _, terminal = state
