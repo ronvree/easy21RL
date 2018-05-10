@@ -1,8 +1,7 @@
-import game
+from version1 import game
 import numpy.random as rnd
-import matplotlib.pyplot as plt
 
-from util import ZeroDict
+from version1.util import ZeroDict
 
 N_0 = 100
 
@@ -41,6 +40,7 @@ def monte_carlo_policy_eval():
 
 
 if __name__ == '__main__':
+    import matplotlib.pyplot as plt
     import numpy as np
 
     q = monte_carlo_policy_eval()

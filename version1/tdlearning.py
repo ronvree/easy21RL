@@ -1,8 +1,8 @@
-import game
+from version1 import game
 
 import numpy.random as rnd
 
-from util import ZeroDict
+from version1.util import ZeroDict
 
 N_0 = 100
 gamma = 1
