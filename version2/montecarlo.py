@@ -1,6 +1,7 @@
-from numpy import random
+from collections import defaultdict
 
-from version2.util import ZeroDict
+from version2.core import Environment
+from version2.policy import Policy
 
 N_0 = 100
 NUM_ITER = 1000000
@@ -8,28 +9,22 @@ NUM_ITER = 1000000
 
 class MonteCarlo:
 
-    def __init__(self, game: callable):
-        self.Q, self.N = ZeroDict(), ZeroDict()
-        self.game = game
+    def __init__(self, env: Environment):
+        self.Q, self.N = Policy(), defaultdict(int)
+        self.env = env
 
     def policy_eval(self):
         Q, N = self.Q, self.N
         for _ in range(NUM_ITER):
-            s = self.game()
+            s = self.env.reset()
             episode, r = [], 0
             while not s.is_terminal():
-                epsilon = N_0 / (N_0 + N[s])
-
-                actions = s.actions()
-
-                if random.random() < epsilon:
-                    a = random.choice(actions)
-                else:
-                    a = max(actions, key=lambda _a: Q[s, _a])
-
+                try:
+                    a = Q.sample_epsilon_greedy(s, epsilon=N_0 / (N_0 + N[s]))
+                except KeyError:
+                    a = self.env.sample_action()
                 episode.append([s, a])
-
-                s, r = s.step(a, inplace=False)
+                s, r = self.env.step(a)
 
             for e in episode:
                 e.append(r)
@@ -45,10 +40,9 @@ class MonteCarlo:
 if __name__ == '__main__':
     import numpy as np
     import matplotlib.pyplot as plt
+    from version2.easy21 import Easy21
 
-    from version2.game import Easy21
-
-    procedure = MonteCarlo(Easy21)
+    procedure = MonteCarlo(Easy21())
 
     q = procedure.policy_eval()
 
