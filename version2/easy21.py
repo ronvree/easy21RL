@@ -36,9 +36,7 @@ class Easy21(Environment):
 
     def __init__(self, p_red: float = 1 / 3):
         assert 0 <= p_red <= 1
-        # self.p_sum, self.d_sum, self.terminal = 0, 0, False
         self.p_red = p_red
-        # self.reset()
         self.state = self._draw_init_state()
 
     @staticmethod

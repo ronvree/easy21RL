@@ -2,7 +2,7 @@ from collections import defaultdict
 
 from version2.easy21 import Easy21
 from version2.core import Environment
-from version2.policy import Policy
+from version2.qtable import QTable
 
 N_0 = 100
 GAMMA = 1
@@ -11,13 +11,13 @@ NUM_ITER = 1000000
 
 class SarsaLambda:
 
-    def __init__(self, env: Environment, lam: float = 0.2):
+    def __init__(self, env: Environment, lam: float=0.2):
         assert 0 <= lam <= 1
-        self.Q, self.N, self.E = Policy(), defaultdict(int), defaultdict(int)
+        self.Q, self.N, self.E = QTable(), defaultdict(int), defaultdict(int)
         self.env = env
         self.lam = lam
 
-    def policy_eval(self) -> Policy:
+    def policy_eval(self) -> QTable:
         N, Q, E = self.N, self.Q, self.E
         for _ in range(NUM_ITER):
             E.clear()

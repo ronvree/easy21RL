@@ -1,7 +1,7 @@
 from collections import defaultdict
 
 from version2.core import Environment
-from version2.policy import Policy
+from version2.qtable import QTable
 
 N_0 = 100
 NUM_ITER = 1000000
@@ -10,7 +10,7 @@ NUM_ITER = 1000000
 class MonteCarlo:
 
     def __init__(self, env: Environment):
-        self.Q, self.N = Policy(), defaultdict(int)
+        self.Q, self.N = QTable(), defaultdict(int)
         self.env = env
 
     def policy_eval(self):

@@ -2,7 +2,7 @@ import collections
 import random
 
 
-class Policy(collections.MutableMapping):
+class QTable(collections.MutableMapping):
 
     def __init__(self, *args, **kwargs):
         self.store = dict()
@@ -47,18 +47,18 @@ class Policy(collections.MutableMapping):
 
 if __name__ == '__main__':
 
-    pi = Policy()
+    table = QTable()
 
-    pi[0, 0] = 1  # State 0, action 0
-    pi[0, 1] = 2  # State 0, action 1
+    table[0, 0] = 1  # State 0, action 0
+    table[0, 1] = 2  # State 0, action 1
 
-    pi[1, 0] = 2  # State 1, action 0
+    table[1, 0] = 2  # State 1, action 0
 
-    pi[1, 0] += 1
+    table[1, 0] += 1
 
-    print(pi[0, 1])
-    print(pi[0, 2])
-    print(pi[1, 0])
-    print([v for v in pi])
-    print(pi.sample_greedy(0))
-    print(pi.sample_epsilon_greedy(0, 0.5))
+    print(table[0, 1])
+    print(table[0, 2])
+    print(table[1, 0])
+    print([v for v in table])
+    print(table.sample_greedy(0))
+    print(table.sample_epsilon_greedy(0, 0.5))
