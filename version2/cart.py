@@ -2,51 +2,61 @@ import gym
 from version2.core import Environment, State
 
 
-class CartPoleState(State):
+class GymState(State):
 
     def __init__(self, observation):
         super().__init__()
         self.observation = observation
 
+    def __str__(self):
+        return str(self.observation)
+
     def copy(self):
-        c = CartPoleState(self.observation)
+        c = GymState(self.observation)
         c.terminal = self.terminal
         return c
 
 
-class CartPole(Environment):
+class GymEnvironment(Environment):
 
-    def __init__(self):
-        self.env = gym.make('CartPole-v0')
+    def __init__(self, name, render=False):
+        self.env = gym.make(name)
         self.state = None
         self.reset()
+        self.render = render
 
     def sample_action(self):
         return self.env.action_space.sample()
 
-    def step(self, action, update=True, render=True) -> tuple:
+    def step(self, action, update=True) -> tuple:
         if self.state.is_terminal():
             raise Exception('Cannot perform action on terminal state!')
         s = self.state if update else self.state.copy()
-        if render:
+        if self.render:
             self.env.render()
-        print(action)
+        # print(action)
         s.observation, reward, s.terminal, info = self.env.step(action)
-        print(s.observation, reward)
+        # print(s.observation, reward)
 
         return s.copy() if update else s, reward
 
     def reset(self):
         self.env.reset()
-        self.state = CartPoleState(None)
+        self.state = GymState(None)
         return self.state.copy()
 
 
 if __name__ == '__main__':
     from version2.sarsa import SarsaLambda
+    from version2.easy21 import Easy21
 
-    e = CartPole()
+    e = Easy21()
+    # e = GymEnvironment('CartPole-v0', render=True)
+    # e = GymEnvironment('Blackjack-v0', render=False)
 
-    SarsaLambda(e).policy_eval()
+    pi = SarsaLambda(e).policy_eval()
+
+    print(pi)
+
 
     # e.step(e.action_space().sample())

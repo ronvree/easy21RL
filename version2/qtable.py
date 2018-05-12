@@ -32,17 +32,29 @@ class QTable(collections.MutableMapping):
     def __len__(self) -> int:
         return sum([len(actions) for actions in self.store.values()])
 
-    def sample_greedy(self, state):
-        actions = self.store[self.__state_transform__(state)]
-        return max(actions, key=actions.get)
+    def __str__(self):
+        t = '| Q Table                                    Value    |\n'
+        t += '+------------------------------------------+----------+\n'
+        t_entry = '| {:<40} | {:8.3f} |\n'
+        for s, a in self:
+            t += t_entry.format(str(s) + ', ' + str(a), self[s, a])
+        t += '+------------------------------------------+----------+\n'
+        return t
 
-    def sample_epsilon_greedy(self, state, epsilon: float):
-        assert 0 <= epsilon <= 1
+    def sample_greedy(self, state, action_space: callable):
         actions = self.store[self.__state_transform__(state)]
-        if random.random() < epsilon:
-            return random.choice(actions)
+        a, v = max(actions.items(), key=lambda x: actions[x[0]])
+        if v >= 0:
+            return a
         else:
-            return self.sample_greedy(state)
+            return action_space()
+
+    def sample_epsilon_greedy(self, state, epsilon: float, action_space: callable):
+        assert 0 <= epsilon <= 1
+        if random.random() < epsilon:
+            return action_space()
+        else:
+            return self.sample_greedy(state, action_space)
 
 
 if __name__ == '__main__':
@@ -60,5 +72,7 @@ if __name__ == '__main__':
     print(table[0, 2])
     print(table[1, 0])
     print([v for v in table])
-    print(table.sample_greedy(0))
-    print(table.sample_epsilon_greedy(0, 0.5))
+    print(len(table))
+    print(table.sample_greedy(0, lambda x: -1))
+    print(table.sample_epsilon_greedy(0, 0.5, lambda x: -1))
+    print(table)

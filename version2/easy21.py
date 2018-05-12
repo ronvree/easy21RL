@@ -10,7 +10,7 @@ class Easy21State(State):
         self.p_sum, self.d_sum = p_sum, d_sum
 
     def __str__(self):
-        return 'P: {}, D: {}, T: {}'.format(self.p_sum, self.d_sum, self.terminal)
+        return 'P: {:<3}, D: {:<3}, T: {}'.format(self.p_sum, self.d_sum, 'y' if self.terminal else 'n')
 
     def __eq__(self, other):
         if not isinstance(other, Easy21State):

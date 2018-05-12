@@ -6,7 +6,7 @@ from version2.qtable import QTable
 
 N_0 = 100
 GAMMA = 1
-NUM_ITER = 1000000
+NUM_ITER = 1000
 
 
 class SarsaLambda:
@@ -32,7 +32,7 @@ class SarsaLambda:
                 N[s_p] += 1
 
                 try:
-                    a_p = Q.sample_epsilon_greedy(s_p, epsilon=N_0 / (N_0 + N[s_p]))
+                    a_p = Q.sample_epsilon_greedy(s_p, epsilon=N_0 / (N_0 + N[s_p]), action_space=self.env.sample_action)
                 except KeyError:
                     a_p = self.env.sample_action()
 
@@ -57,10 +57,15 @@ if __name__ == '__main__':
 
     q = procedure.policy_eval()
 
+    print(q)
+
     vs = np.zeros(shape=(21, 10))
 
-    for (key, _), v in q.items():
-        vs[key.p_sum - 1, key.d_sum - 1] = max([q[key, True], q[key, False]])
+    for (state, action), value in q.items():
+        if (state, not action) in q.keys():
+            vs[state.p_sum - 1, state.d_sum - 1] = max([q[state, True], q[state, False]])
+        else:
+            vs[state.p_sum - 1, state.d_sum - 1] = q[state, action]
 
     plt.imshow(vs)
     plt.show()

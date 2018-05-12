@@ -4,7 +4,7 @@ from version2.core import Environment
 from version2.qtable import QTable
 
 N_0 = 100
-NUM_ITER = 1000000
+NUM_ITER = 100000
 
 
 class MonteCarlo:
@@ -20,7 +20,7 @@ class MonteCarlo:
             episode, r = [], 0
             while not s.is_terminal():
                 try:
-                    a = Q.sample_epsilon_greedy(s, epsilon=N_0 / (N_0 + N[s]))
+                    a = Q.sample_epsilon_greedy(s, epsilon=N_0 / (N_0 + N[s]), action_space=self.env.sample_action)
                 except KeyError:
                     a = self.env.sample_action()
                 episode.append([s, a])
@@ -48,8 +48,11 @@ if __name__ == '__main__':
 
     vs = np.zeros(shape=(21, 10))
 
-    for (key, _), v in q.items():
-        vs[key.p_sum - 1, key.d_sum - 1] = max([q[key, True], q[key, False]])
+    for (state, action), value in q.items():
+        if (state, not action) in q.keys():
+            vs[state.p_sum - 1, state.d_sum - 1] = max([q[state, True], q[state, False]])
+        else:
+            vs[state.p_sum - 1, state.d_sum - 1] = q[state, action]
 
     plt.imshow(vs)
 
