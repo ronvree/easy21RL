@@ -1,7 +1,6 @@
 import random
 from collections import defaultdict
 
-from version2.easy21 import Easy21
 from version2.core import Environment
 from version2.qtable import QTable
 
@@ -67,6 +66,7 @@ class SarsaLambda:
 if __name__ == '__main__':
     import numpy as np
     import matplotlib.pyplot as plt
+    from version2.easy21 import Easy21
 
     procedure = SarsaLambda(Easy21(), lam=0.2)
 

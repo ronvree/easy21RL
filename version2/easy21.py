@@ -1,6 +1,6 @@
 import random
 
-from version2.core import Environment, State
+from version2.core import State, DiscreteActionEnvironment
 
 
 class Easy21State(State):
@@ -32,7 +32,7 @@ class Easy21State(State):
         return c
 
 
-class Easy21(Environment):
+class Easy21(DiscreteActionEnvironment):
 
     def __init__(self, p_red: float = 1 / 3):
         assert 0 <= p_red <= 1
@@ -105,3 +105,6 @@ class Easy21(Environment):
     def reset(self):
         self.state = self._draw_init_state()
         return self.state.copy()
+
+    def action_space(self, state):
+        return [True, False]
