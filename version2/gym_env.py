@@ -8,7 +8,7 @@ class GymState(State):
         super().__init__()
         self.observation = observation
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.observation)
 
     def copy(self):
@@ -49,12 +49,13 @@ class GymEnvironment(Environment):
 if __name__ == '__main__':
     from version2.sarsa import SarsaLambda
     from version2.easy21 import Easy21
+    from version2.montecarlo import MonteCarlo
 
-    e = Easy21()
+    # e = Easy21()
     # e = GymEnvironment('CartPole-v0', render=True)
-    # e = GymEnvironment('Blackjack-v0', render=False)
+    e = GymEnvironment('Blackjack-v0', render=False)
 
-    pi = SarsaLambda(e).policy_eval()
+    pi = MonteCarlo(e).policy_eval()
 
     print(pi)
 

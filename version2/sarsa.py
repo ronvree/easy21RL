@@ -1,3 +1,4 @@
+import random
 from collections import defaultdict
 
 from version2.easy21 import Easy21
@@ -6,7 +7,7 @@ from version2.qtable import QTable
 
 N_0 = 100
 GAMMA = 1
-NUM_ITER = 1000
+NUM_ITER = 100000
 
 
 class SarsaLambda:
@@ -31,10 +32,7 @@ class SarsaLambda:
                 s_p, r = self.env.step(a)
                 N[s_p] += 1
 
-                try:
-                    a_p = Q.sample_epsilon_greedy(s_p, epsilon=N_0 / (N_0 + N[s_p]), action_space=self.env.sample_action)
-                except KeyError:
-                    a_p = self.env.sample_action()
+                a_p = self.sample_derived_policy(s_p, self.epsilon(s_p))
 
                 E[s, a] += 1
                 N[s_p, a_p] += 1
@@ -47,6 +45,23 @@ class SarsaLambda:
 
                 s, a = s_p, a_p
         return Q
+
+    def sample_derived_policy(self, s, epsilon=0):
+        assert 0 <= epsilon <= 1
+        if random.random() < epsilon:
+            return self.env.sample_action()
+        else:
+            try:
+                a, v = self.Q.sample_greedy(s)
+                if v < 0:
+                    return self.env.sample_action()
+                else:
+                    return a
+            except KeyError:
+                return self.env.sample_action()
+
+    def epsilon(self, s):
+        return N_0 / (N_0 + self.N[s])
 
 
 if __name__ == '__main__':

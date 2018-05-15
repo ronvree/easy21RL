@@ -32,7 +32,7 @@ class QTable(collections.MutableMapping):
     def __len__(self) -> int:
         return sum([len(actions) for actions in self.store.values()])
 
-    def __str__(self):
+    def __str__(self) -> str:
         t = '| Q Table                                    Value    |\n'
         t += '+------------------------------------------+----------+\n'
         t_entry = '| {:<40} | {:8.3f} |\n'
@@ -41,20 +41,16 @@ class QTable(collections.MutableMapping):
         t += '+------------------------------------------+----------+\n'
         return t
 
-    def sample_greedy(self, state, action_space: callable):
+    def sample_greedy(self, state):
         actions = self.store[self.__state_transform__(state)]
-        a, v = max(actions.items(), key=lambda x: actions[x[0]])
-        if v >= 0:
-            return a
-        else:
-            return action_space()
+        return max(actions.items(), key=lambda x: actions[x[0]])
 
-    def sample_epsilon_greedy(self, state, epsilon: float, action_space: callable):
-        assert 0 <= epsilon <= 1
-        if random.random() < epsilon:
-            return action_space()
-        else:
-            return self.sample_greedy(state, action_space)
+    # def sample_epsilon_greedy(self, state, epsilon: float, action_space: callable):
+    #     assert 0 <= epsilon <= 1
+    #     if random.random() < epsilon:
+    #         return action_space()
+    #     else:
+    #         return self.sample_greedy(state, action_space)
 
 
 if __name__ == '__main__':

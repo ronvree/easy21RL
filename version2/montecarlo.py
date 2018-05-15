@@ -1,3 +1,4 @@
+import random
 from collections import defaultdict
 
 from version2.core import Environment
@@ -19,10 +20,8 @@ class MonteCarlo:
             s = self.env.reset()
             episode, r = [], 0
             while not s.is_terminal():
-                try:
-                    a = Q.sample_epsilon_greedy(s, epsilon=N_0 / (N_0 + N[s]), action_space=self.env.sample_action)
-                except KeyError:
-                    a = self.env.sample_action()
+                a = self.sample_derived_policy(s, self.epsilon(s))
+
                 episode.append([s, a])
                 s, r = self.env.step(a)
 
@@ -35,6 +34,23 @@ class MonteCarlo:
                 Q[s, a] += (1 / N[s, a]) * (r - Q[s, a])
 
         return Q
+
+    def sample_derived_policy(self, s, epsilon=0):
+        assert 0 <= epsilon <= 1
+        if random.random() < epsilon:
+            return self.env.sample_action()
+        else:
+            try:
+                a, v = self.Q.sample_greedy(s)
+                if v < 0:
+                    return self.env.sample_action()
+                else:
+                    return a
+            except KeyError:
+                return self.env.sample_action()
+
+    def epsilon(self, s):
+        return N_0 / (N_0 + self.N[s])
 
 
 if __name__ == '__main__':
