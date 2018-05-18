@@ -7,17 +7,19 @@ class DQN:
         Deep Q-Network class that wraps around a suitable Keras model
     """
 
-    def __init__(self, model: ks.Model, out_map: list, feature_ex: callable=lambda x: x):
+    def __init__(self, model: ks.Model, out_map: list, feature_ex: callable=lambda x: x, gamma: float=1.0):
         """
         Create a new Deep Q-Network
         :param model: Keras model to be used in the network
         :param out_map: A list mapping the model's output to actions (by index)
         :param feature_ex: Function that is applied on a state to transform it into suitable input for the model
+        :param gamma: Reward discount factor
         """
         assert (None, len(out_map)) == model.output_shape  # Make sure all outputs can be mapped to actions
         self.model = model
         self.phi = feature_ex
         self.out_map = out_map
+        self.gamma = gamma
 
     def predict(self, s, a):
         """
@@ -40,7 +42,7 @@ class DQN:
             pi[self.out_map[i]] = v                                   # Map actions to their predicted Q-value
         return pi
 
-    def fit_on_samples(self, samples, gamma: float):
+    def fit_on_samples(self, samples):
         """
         Train the network on a minibatch of samples
         :param samples: A list of four-tuples (State, Action, Reward, Next State)
@@ -53,8 +55,12 @@ class DQN:
             if s_p.is_terminal():                                                # Get model target
                 qs[self.out_map.index(a)] = r
             else:
-                qs[self.out_map.index(a)] = r + gamma * max(qs)
-            self.model.fit(phi_s, np.reshape(qs, newshape=(1, len(self.out_map))), epochs=1)  # Train model on target
+                qs[self.out_map.index(a)] = r + self.gamma * max(qs)
+            self.model.fit(x=phi_s,                                              # Train model on target
+                           y=np.reshape(qs, newshape=(1, len(self.out_map))),
+                           epochs=1,
+                           verbose=2
+                           )
 
 
 if __name__ == '__main__':

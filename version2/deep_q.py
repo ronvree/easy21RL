@@ -1,3 +1,5 @@
+from collections import deque
+
 import numpy as np
 
 from version2.core import DiscreteActionEnvironment
@@ -21,12 +23,12 @@ class DeepQLearning:
         """
         self.env = environment
         self.model = model
-        self.replay_memory = list()
+        self.replay_memory = deque(maxlen=3000)
 
     def policy_eval(self):
         """
         Train the Q-Network
-        :return:
+        :return: the estimated Q function
         """
         D, Q = self.replay_memory, self.model
         for e in range(NUM_EPISODES):
@@ -34,8 +36,8 @@ class DeepQLearning:
             while not s.is_terminal():                                  # Repeat until environment is terminal:
                 a = self.sample_derived_policy(s, epsilon=0.05)         # - Epsilon-greedily pick an action
                 s_p, r = self.env.step(a)                               # - Perform the action, obtain feedback
-                D.append((s, a, r, s_p))                                # - Store result as sample to be trained on
-                Q.fit_on_samples(self.sample_minibatch(), GAMMA)        # - Train the model on a random batch of samples
+                self.add_to_replay_memory(s, a, r, s_p)                 # - Store result as sample to be trained on
+                Q.fit_on_samples(self.sample_minibatch())               # - Train the model on a random batch of samples
                 s = s_p                                                 # - Continue to next state
 
         return lambda s_, a_: Q.predict(s_, a_)                         # Return the estimated Q function
@@ -62,17 +64,27 @@ class DeepQLearning:
         ixs = np.random.choice(range(len(self.replay_memory)), size=MINIBATCH_SIZE)
         return [self.replay_memory[i] for i in ixs]
 
+    def add_to_replay_memory(self, s, a, r, sp):
+        """
+        Add one sample to the replay memory
+        :param s: State
+        :param a: Action performed on that state
+        :param r: Reward obtained from performing the action
+        :param sp: Resulting state
+        """
+        self.replay_memory.append((s, a, r, sp))
+
 
 if __name__ == '__main__':
     from version2.cartpole import CartPole
     import keras as ks
 
     nn = ks.models.Sequential()
-    nn.add(ks.layers.Dense(16, activation='sigmoid', input_shape=(4,)))
-    nn.add(ks.layers.Dense(16, activation='sigmoid'))
-    nn.add(ks.layers.Dense(2, activation='sigmoid'))
+    nn.add(ks.layers.Dense(32, activation='sigmoid', input_shape=(4,)))
+    nn.add(ks.layers.Dense(32, activation='sigmoid'))
+    nn.add(ks.layers.Dense(2, activation='linear'))
 
-    nn.compile(optimizer='sgd',
+    nn.compile(optimizer=ks.optimizers.Adam(lr=0.001),
                loss='mse')
 
     _e = CartPole(render=True)
