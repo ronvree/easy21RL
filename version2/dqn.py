@@ -46,7 +46,6 @@ class DQN:
         """
         Train the network on a minibatch of samples
         :param samples: A list of four-tuples (State, Action, Reward, Next State)
-        :param gamma: Reward discount factor
         :return:
         """
         for s, a, r, s_p in samples:                                             # Iterate through all samples
