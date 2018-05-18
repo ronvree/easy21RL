@@ -106,5 +106,5 @@ class Easy21(DiscreteActionEnvironment):
         self.state = self._draw_init_state()
         return self.state.copy()
 
-    def action_space(self, state):
-        return [True, False]
+    def action_space(self, state) -> set:
+        return {True, False}

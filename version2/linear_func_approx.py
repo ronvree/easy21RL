@@ -1,4 +1,5 @@
 import random
+import numpy as np
 
 from version2.core import DiscreteActionEnvironment
 
@@ -73,14 +74,14 @@ if __name__ == '__main__':
 
     procedure = SarsaLambda(Easy21(), features=easy21_feature_vector, weights=np.zeros(36), lam=0.2, eta=0.01)
 
-    q = procedure.policy_eval()
+    _q = procedure.policy_eval()
 
     vs = np.zeros(shape=(21, 10))
 
     for p_sum in range(1, 22):
         for d_sum in range(1, 11):
             _s = Easy21State(p_sum, d_sum)
-            vs[p_sum - 1, d_sum - 1] = max([q(_s, True), q(_s, False)])
+            vs[p_sum - 1, d_sum - 1] = max([_q(_s, True), _q(_s, False)])
 
     plt.imshow(vs)
     plt.show()
