@@ -30,7 +30,7 @@ class DeepQLearning:
         Train the Q-Network
         :return: the estimated Q function
         """
-        D, Q = self.replay_memory, self.model
+        Q = self.model
         for e in range(NUM_EPISODES):
             s = self.env.reset()                                        # Initialize the environment
             while not s.is_terminal():                                  # Repeat until environment is terminal:
