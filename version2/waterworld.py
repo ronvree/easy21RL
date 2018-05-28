@@ -3,7 +3,6 @@ import random
 import numpy as np
 import pygame
 from ple import PLE
-# from ple.games import FlappyBird
 import ple.games
 
 from version2.core import State, DiscreteActionEnvironment
@@ -11,14 +10,14 @@ from version2.core import State, DiscreteActionEnvironment
 pygame.init()
 
 
-class FlappyBirdState(State):
+class WaterWorldState(State):
     """
-        A FlappyBird environment state
+        A WaterWorld environment state
     """
 
     def __init__(self, observation):
         """
-        Create a new FlappyBird state
+        Create a new WaterWorld state
         :param observation: Environment observation to be stored in this state
         """
         super().__init__()
@@ -34,7 +33,7 @@ class FlappyBirdState(State):
         """
         :return: A copy of this state
         """
-        c = FlappyBirdState(self.observation)
+        c = WaterWorldState(self.observation)
         c.terminal = self.terminal
         return c
 
@@ -42,25 +41,31 @@ class FlappyBirdState(State):
         self.observation = observation
 
 
-class FlappyBird(DiscreteActionEnvironment):
+class WaterWorld(DiscreteActionEnvironment):
     """
-        FlappyBird environment class
+        WaterWorld environment class
     """
 
-    def __init__(self, size: tuple = (48, 48)):
+    def __init__(self, size: tuple = (48, 48), num_creeps=5):
         self.width, self.height = size
-        self.game = ple.games.FlappyBird(width=self.width, height=self.height)
+        self.game = ple.games.WaterWorld(width=self.width, height=self.height, num_creeps=num_creeps)
         self.game.screen = pygame.display.set_mode(self.game.getScreenDims(), 0, 32)
         self.game.clock = pygame.time.Clock()
         self.game.rng = np.random.RandomState(24)
-
-        self.game.rewards['loss'] = -1
-        self.game.rewards['win'] = 1
 
         self.ple = PLE(self.game)
         self.ple.init()
 
         self.i = 0
+
+        self.actions = {'up', 'down', 'left', 'right'}
+
+        self.actions = {
+            "up": pygame.K_w,
+            "left": pygame.K_a,
+            "right": pygame.K_d,
+            "down": pygame.K_s
+        }
 
         self.state = self.reset()
 
@@ -68,7 +73,7 @@ class FlappyBird(DiscreteActionEnvironment):
         """
         :return: A random sample from the action space
         """
-        return bool(random.getrandbits(1))
+        return random.choice(self.actions.keys())
 
     def step(self, action, update=True) -> tuple:
         """
@@ -81,15 +86,12 @@ class FlappyBird(DiscreteActionEnvironment):
             raise Exception('Cannot perform action on terminal state!')
         s = self.state if update else self.state.copy()
 
-        if action:
-            reward = self.ple.act(pygame.K_w)
-        else:
-            reward = self.ple.act(self.ple.NOOP)
+        reward = self.ple.act(self.actions[action])
 
         s.set_observation(self.game.getGameState())
         s.terminal = self.ple.game_over()
 
-        # if self.i % 5 == 2:
+        # if self.i % 10 == 0:
         pygame.display.update()
 
         return s.copy() if update else s, reward
@@ -100,7 +102,7 @@ class FlappyBird(DiscreteActionEnvironment):
         :return: A state containing the initial observation
         """
         self.ple.reset_game()
-        self.state = FlappyBirdState(self.game.getGameState())
+        self.state = WaterWorldState(self.game.getGameState())
 
         self.i += 1
 
@@ -112,15 +114,15 @@ class FlappyBird(DiscreteActionEnvironment):
         :param state: The state on which an action should be performed
         :return: A set of actions
         """
-        return {False, True}  # Actions independent of state
+        return set(self.actions.keys())  # Actions independent of state
 
 
 if __name__ == '__main__':
     import numpy as np
     import time
 
-    width, height = size = 288, 512
-    e = FlappyBird(size)
+    width, height = size = 256, 256
+    e = WaterWorld(size)
 
     _s = e.reset()
     while not _s.is_terminal():

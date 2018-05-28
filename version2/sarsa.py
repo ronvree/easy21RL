@@ -5,7 +5,7 @@ from version2.core import Environment
 from version2.qtable import QTable
 
 N_0 = 100
-GAMMA = 1
+GAMMA = 0.99
 NUM_ITER = 1000000000
 
 
@@ -32,6 +32,8 @@ class SarsaLambda:
                 N[s_p] += 1
 
                 a_p = self.sample_derived_policy(s_p, self.epsilon(s_p))
+
+                # print(self.epsilon(s_p))
 
                 E[s, a] += 1
                 N[s_p, a_p] += 1

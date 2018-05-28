@@ -115,6 +115,79 @@ class PixelCopter(DiscreteActionEnvironment):
         return {False, True}  # Actions independent of state
 
 
+class VisualPixelCopter(DiscreteActionEnvironment):
+    """
+        PixelCopter environment class giving screen captures as observation
+    """
+
+    def __init__(self, size: tuple = (48, 48)):
+        self.width, self.height = size
+        self.game = Pixelcopter(width=self.width, height=self.height)
+        self.game.screen = pygame.display.set_mode(self.game.getScreenDims(), 0, 32)
+        self.game.clock = pygame.time.Clock()
+        self.game.rng = np.random.RandomState(24)
+
+        self.game.rewards['loss'] = -1
+        self.game.rewards['win'] = 1
+
+        self.ple = PLE(self.game)
+        self.ple.init()
+
+        self.i = 0
+
+        self.state = self.reset()
+
+    def sample_action(self):
+        """
+        :return: A random sample from the action space
+        """
+        return bool(random.getrandbits(1))
+
+    def step(self, action, update=True) -> tuple:
+        """
+        Perform an action on the current environment state
+        :param action: The action to be performed
+        :param update: A boolean indicating whether the change in the environment should be stored
+        :return: A two-tuple of (observation, reward)
+        """
+        if self.state.is_terminal():
+            raise Exception('Cannot perform action on terminal state!')
+        s = self.state if update else self.state.copy()
+
+        if action:
+            reward = self.ple.act(pygame.K_w)
+        else:
+            reward = self.ple.act(self.ple.NOOP)
+
+        s.set_observation(self.ple.getScreenGrayscale())
+        s.terminal = self.ple.game_over()
+
+        # if self.i % 10 == 0:
+        pygame.display.update()
+
+        return s.copy() if update else s, reward
+
+    def reset(self):
+        """
+        Reset the environment state
+        :return: A state containing the initial observation
+        """
+        self.ple.reset_game()
+        self.state = PixelCopterState(self.ple.getScreenGrayscale())
+
+        self.i += 1
+
+        return self.state.copy()
+
+    def action_space(self, state) -> set:
+        """
+        Get the actions that can be performed on the specified state
+        :param state: The state on which an action should be performed
+        :return: A set of actions
+        """
+        return {False, True}  # Actions independent of state
+
+
 if __name__ == '__main__':
     import numpy as np
     import time
