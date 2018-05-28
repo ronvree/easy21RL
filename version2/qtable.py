@@ -76,8 +76,8 @@ class QTable(collections.MutableMapping):
         :param state: The state from which an action should be chosen
         :return: The greedily sampled action to be performed from the specified state
         """
-        actions = self.store[self.__state_transform__(state)]       # Obtain all actions stored with the state
-        return max(actions.items(), key=lambda x: actions[x[0]])    # Pick the action that maximizes Q(s, a)
+        actions = self.store[self.__state_transform__(state)]     # Obtain all actions stored with the state
+        return max(actions.items(), key=lambda x: actions[x[0]])  # Pick the (action, value pair) that maximizes Q(s, a)
 
 
 if __name__ == '__main__':

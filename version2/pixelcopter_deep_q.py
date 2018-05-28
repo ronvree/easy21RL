@@ -12,7 +12,7 @@ if __name__ == '__main__':
     nn.add(ks.layers.Dense(32, activation='sigmoid'))
     nn.add(ks.layers.Dense(2, activation='linear'))
 
-    nn.compile(optimizer=ks.optimizers.Adam(lr=0.001),
+    nn.compile(optimizer=ks.optimizers.Adam(lr=0.0001),
                loss='mse')
 
     width, height = size = (256, 256)
@@ -23,7 +23,7 @@ if __name__ == '__main__':
         o = np.zeros(shape=(1, 7))
         o[0, 0] = s.observation['player_y'] / height
         o[0, 1] = s.observation['player_dist_to_ceil'] / (height / 2)
-        o[0, 2] = s.observation['player_dist_to_ceil'] / (height / 2)
+        o[0, 2] = s.observation['player_dist_to_floor'] / (height / 2)
         o[0, 3] = s.observation['player_vel']
         o[0, 4] = s.observation['next_gate_dist_to_player'] / width
         o[0, 5] = s.observation['next_gate_block_top'] / height
@@ -36,6 +36,3 @@ if __name__ == '__main__':
     dql = DeepQLearning(_e, dqn)
 
     q = dql.policy_eval()
-
-
-

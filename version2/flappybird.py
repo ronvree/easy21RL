@@ -3,21 +3,22 @@ import random
 import numpy as np
 import pygame
 from ple import PLE
-from ple.games import Pixelcopter
+# from ple.games import FlappyBird
+import ple.games
 
 from version2.core import State, DiscreteActionEnvironment
 
 pygame.init()
 
 
-class PixelCopterState(State):
+class FlappyBirdState(State):
     """
-        A PixelCopter environment state
+        A FlappyBird environment state
     """
 
     def __init__(self, observation):
         """
-        Create a new PixelCopter state
+        Create a new FlappyBird state
         :param observation: Environment observation to be stored in this state
         """
         super().__init__()
@@ -33,7 +34,7 @@ class PixelCopterState(State):
         """
         :return: A copy of this state
         """
-        c = PixelCopterState(self.observation)
+        c = FlappyBirdState(self.observation)
         c.terminal = self.terminal
         return c
 
@@ -41,14 +42,14 @@ class PixelCopterState(State):
         self.observation = observation
 
 
-class PixelCopter(DiscreteActionEnvironment):
+class FlappyBird(DiscreteActionEnvironment):
     """
-        PixelCopter environment class
+        FlappyBird environment class
     """
 
     def __init__(self, size: tuple = (48, 48)):
         self.width, self.height = size
-        self.game = Pixelcopter(width=self.width, height=self.height)
+        self.game = ple.games.FlappyBird(width=self.width, height=self.height)
         self.game.screen = pygame.display.set_mode(self.game.getScreenDims(), 0, 32)
         self.game.clock = pygame.time.Clock()
         self.game.rng = np.random.RandomState(24)
@@ -100,7 +101,7 @@ class PixelCopter(DiscreteActionEnvironment):
         :return: A state containing the initial observation
         """
         self.ple.reset_game()
-        self.state = PixelCopterState(self.game.getGameState())
+        self.state = FlappyBirdState(self.game.getGameState())
 
         self.i += 1
 
@@ -118,10 +119,9 @@ class PixelCopter(DiscreteActionEnvironment):
 if __name__ == '__main__':
     import numpy as np
     import time
-    from version2.linear_func_approx import SarsaLambda
 
     width, height = size = 256, 256
-    e = PixelCopter(size)
+    e = FlappyBird(size)
 
     _s = e.reset()
     while not _s.is_terminal():
@@ -130,48 +130,3 @@ if __name__ == '__main__':
         if _s.is_terminal():
             _s = e.reset()
         time.sleep(0.1)
-
-    # h_seg = [(0 * height, (1 / 4) * height),
-    #          ((1 / 4) * height, (1 / 2) * height),
-    #          ((1 / 2) * height, (3 / 4) * height),
-    #          ((3 / 4) * height, 1 * height)
-    #          ]
-    #
-    # d_seg = [(0, height / 10), (height / 10, height / 4), (height / 4, height / 2)]
-    #
-    # w_seg = [(0 * width, (1 / 4) * width),
-    #          ((1 / 4) * width, (1 / 2) * width),
-    #          ((1 / 2) * width, (3 / 4) * width),
-    #          ((3 / 4) * width, 1 * width)
-    #          ]
-    #
-    # def reduce_state(s, a):
-    #     # o = np.zeros(2 * 4 * 4 * 4 * 4 * 4 * 4)
-    #     o = np.zeros(2 * 4 * 4 * 4 * 2 * 2 * 2)
-    #     i = 0
-    #     for _a in e.action_space(s):
-    #         for h_l, h_r in h_seg:
-    #             o1 = s.observation['player_y'] / height
-    #             for d1_l, d1_r in d_seg:
-    #                 o2 = s.observation['player_dist_to_ceil'] / height
-    #                 for d2_l, d2_r in d_seg:
-    #                     o3 = s.observation['player_dist_to_floor'] / height
-    #                     for b1_l, b1_r in h_seg[:2]:
-    #                         o4 = s.observation['next_gate_block_top'] / height
-    #                         for b2_l, b2_r in h_seg[:2]:
-    #                             o5 = s.observation['next_gate_block_bottom'] / height
-    #                             for w_l, w_r in w_seg[:2]:
-    #                                 o6 = s.observation['next_gate_dist_to_player'] / width
-    #
-    #                                 o[i] = 1 if a == _a and \
-    #                                             h_l < o1 <= h_r and \
-    #                                             d1_l < o2 <= d1_r and \
-    #                                             d2_l < o3 <= d2_r and \
-    #                                             b1_l < o4 <= b1_l and \
-    #                                             b2_l < o5 <= b2_r and \
-    #                                             w_l < o6 <= w_r \
-    #                                     else 0
-    #                                 i += 1
-    #     return o
-    #
-    # sl = SarsaLambda(e, features=reduce_state, weights=np.zeros(128 * 2 * 2 * 2)).policy_eval()

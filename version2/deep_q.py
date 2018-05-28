@@ -7,7 +7,7 @@ from version2.dqn import DQN
 
 NUM_EPISODES = 100000  # Number of times the environment is run
 MINIBATCH_SIZE = 32    # Size of batches used to train the network
-GAMMA = 1              # Reward discount factor
+GAMMA = 0.99           # Reward discount factor
 
 
 class DeepQLearning:

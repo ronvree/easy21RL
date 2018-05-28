@@ -6,7 +6,7 @@ from version2.qtable import QTable
 
 N_0 = 100
 GAMMA = 1
-NUM_ITER = 100000
+NUM_ITER = 1000000000
 
 
 class SarsaLambda:
@@ -43,6 +43,8 @@ class SarsaLambda:
                     E[k] *= GAMMA * self.lam
 
                 s, a = s_p, a_p
+            # print(len(Q))
+            # print(Q)
         return Q
 
     def sample_derived_policy(self, s, epsilon=0):

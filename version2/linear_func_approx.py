@@ -5,7 +5,7 @@ from version2.core import DiscreteActionEnvironment
 
 N_0 = 100
 GAMMA = 1
-NUM_ITER = 1000000
+NUM_ITER = 100000000
 
 
 class SarsaLambda:

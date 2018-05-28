@@ -50,11 +50,13 @@ class DQN:
         """
         for s, a, r, s_p in samples:                                             # Iterate through all samples
             phi_s = self.phi(s)                                                  # Prepare state for model input
+            phi_p = self.phi(s_p)
             qs = self.model.predict([phi_s])[0]                                  # Compute model output
+            qp = self.model.predict([phi_p])[0]
             if s_p.is_terminal():                                                # Get model target
                 qs[self.out_map.index(a)] = r
             else:
-                qs[self.out_map.index(a)] = r + self.gamma * max(qs)
+                qs[self.out_map.index(a)] = r + self.gamma * max(qp)
             self.model.fit(x=phi_s,                                              # Train model on target
                            y=np.reshape(qs, newshape=(1, len(self.out_map))),
                            epochs=1,
