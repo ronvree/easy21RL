@@ -33,8 +33,6 @@ class SarsaLambda:
 
                 a_p = self.sample_derived_policy(s_p, self.epsilon(s_p))
 
-                # print(self.epsilon(s_p))
-
                 E[s, a] += 1
                 N[s_p, a_p] += 1
 
@@ -45,8 +43,6 @@ class SarsaLambda:
                     E[k] *= GAMMA * self.lam
 
                 s, a = s_p, a_p
-            # print(len(Q))
-            # print(Q)
         return Q
 
     def sample_derived_policy(self, s, epsilon=0):
